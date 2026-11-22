@@ -95,6 +95,28 @@ svg.map{width:100%;max-width:300px;height:auto;display:block;background:var(--pa
 .empty{color:var(--muted);font-size:14px}
 footer{margin-top:40px;font-size:12px;color:var(--muted);max-width:48em}
 @media (prefers-reduced-motion: reduce){.spot{transition:none}}
+
+/* ご意見ボックス */
+.fb{margin-top:44px;padding:26px;display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:20px 32px}
+@media (max-width:760px){.fb{grid-template-columns:1fr;padding:20px}}
+.fb h2{font-family:var(--display);font-weight:400;font-size:1.5rem;margin:0;line-height:1.35}
+.fb .intro p{margin:8px 0 0;font-size:14px;color:var(--brown-2)}
+.fb form{display:flex;flex-direction:column;gap:14px;min-width:0}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-family:var(--display);font-size:13px}
+.field label .opt{font-family:var(--body);font-size:12px;color:var(--muted);margin-left:6px}
+.field input,.field textarea{font:inherit;font-size:15px;color:var(--brown);background:var(--paper);border:2px solid var(--brown);border-radius:12px;padding:10px 12px;box-sizing:border-box;width:100%}
+.field textarea{min-height:120px;resize:vertical}
+.field input:focus-visible,.field textarea:focus-visible{outline:3px solid var(--mustard);outline-offset:1px}
+.field .hint{font-size:12px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.send{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.send button{font-family:var(--display);font-size:15px;padding:10px 26px;border:2.5px solid var(--brown);border-radius:999px;background:var(--mustard);color:var(--brown);box-shadow:4px 4px 0 var(--brown);cursor:pointer}
+.send button:hover{background:#ebb85f}
+.send button:disabled{opacity:.6;cursor:wait}
+.status{font-size:14px;margin:0}
+.status.ok{color:var(--brown);background:var(--mustard-soft);border-radius:8px;padding:4px 12px}
+.status.err{color:#9b2c2c}
 </style>
 
 <header class="bar">
@@ -131,6 +153,33 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);max-width:48em}
     </div>
     <section class="box panel" id="panel" aria-live="polite"></section>
   </div>
+
+  <section class="box fb" id="goiken" aria-labelledby="fb-title">
+    <div class="intro">
+      <h2 id="fb-title">📮 ご意見ボックス</h2>
+      <p>使ってみた感想や、載せてほしい純喫茶・建物、情報の間違いなどを教えてください。いただいた内容は運営者だけが読みます。</p>
+    </div>
+    <form id="fb-form" novalidate>
+      <div class="field">
+        <label for="fb-message">ご意見</label>
+        <textarea id="fb-message" name="message" maxlength="1000" required placeholder="例：上野の〇〇という喫茶店も載せてほしいです"></textarea>
+        <span class="hint" id="fb-count">0 / 1000</span>
+      </div>
+      <div class="field">
+        <label for="fb-recommend">おすすめのお店・建物<span class="opt">（任意）</span></label>
+        <input id="fb-recommend" name="recommend" maxlength="200" placeholder="例：喫茶〇〇（神保町）">
+      </div>
+      <div class="field">
+        <label for="fb-name">お名前<span class="opt">（任意・ニックネームでどうぞ）</span></label>
+        <input id="fb-name" name="name" maxlength="50" autocomplete="nickname">
+      </div>
+      <div class="hp" aria-hidden="true"><label for="fb-website">空けておいてください</label><input id="fb-website" name="website" tabindex="-1" autocomplete="off"></div>
+      <div class="send">
+        <button type="submit" id="fb-submit">送信する</button>
+        <p class="status" id="fb-status" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+  </section>
 
   <footer>
     位置はおおよその座標で、距離は直線距離をもとにした目安です（徒歩は道のりを直線の1.25倍、分速80mで計算）。休業・閉店や営業時間の変更があるので、出かける前に各店・各施設の情報を確認してください。
@@ -328,6 +377,34 @@ document.addEventListener("click",e=>{
     document.querySelector(`.spot[data-id="${t.id}"]`)?.scrollIntoView({block:"nearest"});}
 });
 render();
+
+// ---- ご意見ボックス：Supabase（kaden-test）の feedback テーブルに保存 ----
+// 公開用キー（publishable key）は送信専用。読む・消す権限はない設定
+const FB_URL="https://vvkzaeerkpxknfkqstft.supabase.co/rest/v1/feedback";
+const FB_KEY="sb_publishable_-Vd29W34YKP7Ge_NNrYlug_wHi7Ax1V";
+(()=>{
+  const f=document.getElementById("fb-form"),msg=document.getElementById("fb-message"),
+        cnt=document.getElementById("fb-count"),btn=document.getElementById("fb-submit"),out=document.getElementById("fb-status");
+  const say=(t,cls)=>{out.textContent=t;out.className="status"+(cls?" "+cls:"")};
+  msg.addEventListener("input",()=>{cnt.textContent=`${msg.value.length} / 1000`});
+  f.addEventListener("submit",async e=>{
+    e.preventDefault();
+    const el=f.elements;
+    if(el.website.value)return; // ボット対策：見えない欄に入力があれば送らない
+    const message=msg.value.trim();
+    if(!message){say("ご意見を入力してください。","err");msg.focus();return}
+    const body={message,recommend:el.recommend.value.trim()||null,name:el.namedItem("name").value.trim()||null};
+    btn.disabled=true;say("送信しています…");
+    try{
+      const r=await fetch(FB_URL,{method:"POST",headers:{"apikey":FB_KEY,"Content-Type":"application/json","Prefer":"return=minimal"},body:JSON.stringify(body)});
+      if(!r.ok)throw new Error(r.status);
+      f.reset();cnt.textContent="0 / 1000";
+      say("送信しました。ありがとうございます！","ok");
+    }catch(err){
+      say("送信できませんでした。通信状態を確かめて、もう一度お試しください。","err");
+    }finally{btn.disabled=false}
+  });
+})();
 </script>
 
 </body>
