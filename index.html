@@ -75,6 +75,15 @@ button:focus-visible{outline:3px solid var(--mustard);outline-offset:2px}
 .meta{font-size:13px;color:var(--muted);margin:0}
 .note{margin:10px 0 0;max-width:40em}
 .links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+/* 名前の右に写真。狭い画面では名前の下へ */
+.head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,46%);gap:18px;align-items:start}
+@media (max-width:560px){.head{grid-template-columns:1fr}}
+.photo{margin:0;display:flex;flex-direction:column;gap:4px;min-width:0}
+.photo img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border:2.5px solid var(--brown);border-radius:14px;box-shadow:4px 4px 0 var(--brown);background:var(--paper)}
+.photo figcaption{font-size:10.5px;line-height:1.5;color:var(--muted);overflow-wrap:anywhere}
+.photo figcaption a{color:inherit}
+.photo.none{aspect-ratio:4/3;max-width:100%;border:2.5px dashed var(--line);border-radius:14px;display:grid;place-items:center;color:var(--muted);font-size:13px;background:var(--paper)}
+.photo.none img,.photo.none figcaption{display:none}
 .btn{display:inline-block;text-decoration:none;font-family:var(--display);font-size:13px;padding:6px 16px;border:2px solid var(--brown);border-radius:999px;background:var(--mustard);color:var(--brown);box-shadow:3px 3px 0 var(--brown)}
 .btn:hover{background:#ebb85f}
 a{color:inherit;text-underline-offset:3px}
@@ -183,6 +192,7 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);max-width:48em}
 
   <footer>
     位置はおおよその座標で、距離は直線距離をもとにした目安です（徒歩は道のりを直線の1.25倍、分速80mで計算）。休業・閉店や営業時間の変更があるので、出かける前に各店・各施設の情報を確認してください。
+    写真は Wikimedia Commons で自由な利用が認められているものを使っています。撮影者とライセンスは各写真の下に記載しています。
   </footer>
 </div>
 
@@ -282,6 +292,46 @@ const K={
  "大阪市中央公会堂":"🧱 赤煉瓦と青銅ドーム","大阪府立中之島図書館":"🏛 ネオ・バロック","北浜レトロビル":"🫖 英国式ティールーム","綿業会館":"🛋 部屋ごとに違う内装",
  "芝川ビル":"🗿 マヤ・インカ風の装飾","生駒ビルヂング":"🦅 時計塔と鷲の彫刻","大丸心斎橋店 本館":"✨ ヴォーリズの装飾","高島屋大阪店（南海ビル）":"🏛 列柱の駅ビル",
 };
+// 写真：Wikimedia Commons の自由に使える写真（[ファイル, 撮影者, ライセンス, ライセンスURL, 出典ページ]）
+const P={
+ "東京国立博物館 本館":["photos/p01.jpg","Wiiii","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Tokyo_National_Museum,_Honkan_2010.jpg"],
+ "国立科学博物館 日本館":["photos/p02.jpg","663highland","CC BY 2.5","https://creativecommons.org/licenses/by/2.5","https://commons.wikimedia.org/wiki/File:NMNC01s3200.jpg"],
+ "国際子ども図書館（旧帝国図書館）":["photos/p03.jpg","Kakidai","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:2019_International_Library_of_Children%27s_Literature.jpg"],
+ "旧岩崎邸 洋館":["photos/p04.jpg","Wiiii","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Former_Iwasaki_Family_House_and_Garden_2010.jpg"],
+ "東京大学 安田講堂":["photos/p05.jpg","Kakidai","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Yasuda_Auditorium_-_Tokyo_University_4.jpg"],
+ "学士会館":["photos/p06.jpg","Kakidai","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Gakushikaikan.jpg"],
+ "山の上ホテル":["photos/p07.jpg","江戸村のとくぞう","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Hilltop_Hotel_191224a.jpg"],
+ "旧万世橋駅（マーチエキュート神田万世橋）":["photos/p08.jpg","Unknown authorUnknown author","Public domain","","https://commons.wikimedia.org/wiki/File:Manseibashi_Station_original.jpg"],
+ "和光本館（服部時計店）":["photos/p09.jpg","663highland","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:170312_Ginza_Tokyo_Japan01s3.jpg"],
+ "築地本願寺":["photos/p10.jpg","Kakidai","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:2019_Tsukiji_Honganji.jpg"],
+ "東京駅 丸ノ内駅舎":["photos/p11.jpg","MaedaAkihiko","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Tokyo-STA_Marunouchi-Entrance_2023.jpg"],
+ "明治生命館":["photos/p12.jpg","Wiiii","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Meiji_Yasuda_Life_Insurance_Company_Head_Office_2009.jpg"],
+ "日本銀行本店 本館":["photos/p13.jpg","Wiiii","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Bank_of_Japan_2010.jpg"],
+ "日本橋三越本店":["photos/p14.jpg","whity","CC BY 2.0","https://creativecommons.org/licenses/by/2.0","https://commons.wikimedia.org/wiki/File:Mitsukoshi_(8619735965).jpg"],
+ "神谷バー":["photos/p15.jpg","江戸村のとくぞう (Edomura no Tokuzo)","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Kamiya_bar1.JPG"],
+ "東武浅草駅（松屋浅草）":["photos/p16.jpg","くろふね","CC BY 4.0","https://creativecommons.org/licenses/by/4.0","https://commons.wikimedia.org/wiki/File:%E6%9D%B1%E6%AD%A6%E6%B5%85%E8%8D%89%E9%A7%8520210327-IMG_2215.jpg"],
+ "伊勢丹新宿店 本館":["photos/p17.jpg","Kakidai","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Isetan_Shinjuku_2018.jpg"],
+ "京都文化博物館 別館（旧日本銀行京都支店）":["photos/p18.jpg","Asturio Cantabrio","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:The_Museum_of_Kyoto_annex_ac_(1).jpg"],
+ "中京郵便局":["photos/p19.jpg","Pastern","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Nakagy%C5%8D_Post_Office_001.JPG"],
+ "1928ビル":["photos/p20.jpg","Braveheart","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:1928_Building,_Kyoto_02.jpg"],
+ "東華菜館":["photos/p21.jpg","Roman SUZUKI","CC BY 3.0","https://creativecommons.org/licenses/by/3.0","https://commons.wikimedia.org/wiki/File:Shimogyo_Ward,_Kyoto,_Kyoto_Prefecture,_Japan_-_panoramio_(9).jpg"],
+ "新風館（旧京都中央電話局）":["photos/p22.jpg","Photograph by Mike Peel (www.mikepeel.ne…","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:At_Kyoto_2024_136.jpg"],
+ "京都府庁 旧本館":["photos/p23.jpg","Otraff","CC BY-SA 3.0","http://creativecommons.org/licenses/by-sa/3.0/","https://commons.wikimedia.org/wiki/File:Kyotofucho-kyuchosha-20010612.jpg"],
+ "京都市京セラ美術館":["photos/p24.jpg","Kakidai","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Kyoto_Municipal_Museum_of_Art_1933_%E2%85%B1.jpg"],
+ "船岡温泉":["photos/p25.jpg","Thirteen-fri","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Funaoka_Onsen_20180410_02.jpg"],
+ "大阪市中央公会堂":["photos/p26.jpg","Sakai Yayoi","CC0","http://creativecommons.org/publicdomain/zero/1.0/deed.en","https://commons.wikimedia.org/wiki/File:Osaka_City_Central_Public_Hall_ao.jpg"],
+ "大阪府立中之島図書館":["photos/p27.jpg","Asturio Cantabrio","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Osaka_Prefectural_Nakanoshima_Library_2019-10_ac.jpg"],
+ "北浜レトロビル":["photos/p28.jpg","Bittercup","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Kitahama-Retro.jpg"],
+ "綿業会館":["photos/p29.jpg","Mc681","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Mengyo_kaikan_in_201408.JPG"],
+ "生駒ビルヂング":["photos/p30.jpg","Bittercup","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Ikoma-bld.jpg"],
+ "大丸心斎橋店 本館":["photos/p31.jpg","Tokumeigakarinoaoshima","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:DAIMARU_Shinsaibashi_Store_Main_Building.jpg"],
+ "高島屋大阪店（南海ビル）":["photos/p32.jpg","Own work","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Namba_Station.JPG"],
+ "ラドリオ":["photos/p33.jpg","Araisyohei","CC BY 4.0","https://creativecommons.org/licenses/by/4.0","https://commons.wikimedia.org/wiki/File:Jinbocho_ladrio_2023-10-20(2)_as.jpg"],
+ "フランソア喫茶室":["photos/p34.jpg","DLW79DGR","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Staind_glass_of_Salon_de_th%C3%A9_Fran%C3%A7ois.jpg"],
+ "六曜社珈琲店":["photos/p35.jpg","舌先現象になります","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Rokuyousha_Chikaten.jpg"],
+ "イノダコーヒ 本店":["photos/p36.jpg","mariemon","CC BY 3.0","https://creativecommons.org/licenses/by/3.0","https://commons.wikimedia.org/wiki/File:Inoda6770.JPG"],
+};
+
 // 西暦→和暦（年の途中の改元は、その年の大半の元号で表す）
 const era=y=>!y?["昭和の","老舗"]:y<=1912?["明治",`${y-1867}年`]:y<=1926?["大正",`${y-1911}年`]:["昭和",`${y-1925}年`];
 const AREAS=["すべて","東京","京都","大阪"];
@@ -346,11 +396,22 @@ function renderPanel(){
   if(!s){el.innerHTML=`<p class="empty">このエリアには登録がありません。</p>`;return}
   const o=other(s.t),near=nearOf(s,st.r);
   const all=S.filter(x=>x.t===o&&x.a===s.a).map(x=>({...x,m:dist(s,x)})).sort((p,q)=>p.m-q.m);
+  const ph=P[s.n];
+  const photo=ph?`<figure class="photo">
+        <img src="${ph[0]}" alt="${esc(s.n)}の写真" loading="lazy" onerror="this.parentNode.classList.add('none')">
+        <figcaption>写真：<a href="${ph[4]}" target="_blank" rel="noopener">${esc(ph[1])}</a> / ${ph[3]?`<a href="${ph[3]}" target="_blank" rel="noopener">${esc(ph[2])}</a>`:esc(ph[2])}（Wikimedia Commons）</figcaption>
+      </figure>`
+    :`<figure class="photo none"><span>📷 写真は準備中です</span></figure>`;
   el.innerHTML=`
-    ${TAG[s.t]}
-    <h2>${esc(s.n)}</h2>
-    <p class="meta">${s.a}・${esc(s.p)}${s.y?` ／ ${s.t==="kissa"?"創業":"竣工"} ${s.y}年`:""}${s.by?` ／ 設計 ${esc(s.by)}`:""}</p>
-    ${K[s.n]?`<p class="oshi big"><i>推し</i>${esc(K[s.n])}</p>`:""}
+    <div class="head">
+      <div class="htxt">
+        ${TAG[s.t]}
+        <h2>${esc(s.n)}</h2>
+        <p class="meta">${s.a}・${esc(s.p)}${s.y?` ／ ${s.t==="kissa"?"創業":"竣工"} ${s.y}年`:""}${s.by?` ／ 設計 ${esc(s.by)}`:""}</p>
+        ${K[s.n]?`<p class="oshi big"><i>推し</i>${esc(K[s.n])}</p>`:""}
+      </div>
+      ${photo}
+    </div>
     <p class="note">${esc(s.d)}</p>
     <div class="links"><a class="btn" href="${gq(s)}" target="_blank" rel="noopener">Googleマップで開く ↗</a></div>
     <div class="near">
