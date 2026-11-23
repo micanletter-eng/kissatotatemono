@@ -101,7 +101,7 @@ summary.fold::-webkit-details-marker{display:none}
 .pk a{color:var(--brown);font-size:12px}
 .pk-top{display:flex;gap:10px;align-items:center;margin-bottom:6px}
 .pk-th{flex:none;width:60px;height:60px;object-fit:cover;border:2px solid var(--brown);border-radius:10px;box-shadow:2px 2px 0 var(--brown);background:var(--paper)}
-.pk-meta{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
+.pk-meta{flex:1;display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
 .pk-meta p{margin:0}
 .pk .cr{margin:8px 0 0;font-size:9.5px;line-height:1.4;color:var(--muted);overflow-wrap:anywhere}
 .pk .cr a{font-size:inherit;color:inherit}
@@ -612,21 +612,29 @@ const GP={
  "粟餅所 澤屋":["photos/g08.jpg","Kykk wiki","CC0","http://creativecommons.org/publicdomain/zero/1.0/deed.en","https://commons.wikimedia.org/wiki/File:Awamochi_Sawaya.jpg"],
  "榮太樓總本鋪 日本橋本店":["photos/g09.jpg","毒島みるく","CC0","http://creativecommons.org/publicdomain/zero/1.0/deed.en","https://commons.wikimedia.org/wiki/File:Eitaro_Sohonpo_2026.jpg"],
 };
-const gphoto=g=>smallPhoto(GP[g.n],g.n);
 const giftsNear=(s,r)=>G.map(g=>({...g,m:dist(s,g)})).sort((p,q)=>p.m-q.m).filter(g=>g.m<=r);
-const smallPhoto=(ph,n)=>`<figure class="gph"><img src="${ph[0]}" alt="${esc(n)}の写真" loading="lazy" onerror="this.closest('.gd').classList.remove('has-ph');this.parentNode.remove()">
-    <figcaption>写真：<a href="${ph[4]}" target="_blank" rel="noopener">${esc(ph[1])}</a> / ${ph[3]?`<a href="${ph[3]}" target="_blank" rel="noopener">${esc(ph[2])}</a>`:esc(ph[2])}</figcaption></figure>`;
-// 近くの喫茶・建物の詳細：左上に小さな正方形の写真、その横に推しと場所。説明とリンクは下に全幅で
-function peekHTML(s,p){const ph=P[p.n];
+// 小さな詳細（近くの喫茶・建物、手みやげの「くわしく」共通）：上の段に推し・名物と場所、右に小さな正方形の写真。説明とリンクは下に全幅で
+function compact({ph,name,chip,meta,desc,links,extra=""}){
   return `<div class="pk">
-    <div class="pk-top">${ph?`<img class="pk-th" src="${ph[0]}" alt="${esc(p.n)}の写真" loading="lazy" onerror="this.remove()">`:""}
-      <div class="pk-meta">${K[p.n]?`<p class="oshi"><i>推し</i>${esc(K[p.n])}</p>`:""}
-        <p class="d">📍 ${p.a}・${esc(p.p)}${p.y?` ／ ${p.y}年${p.t==="kissa"?"創業":"竣工"}`:""}${p.by?` ／ ${esc(p.by)}`:""}</p></div></div>
-    <p>${esc(p.d)}</p>
-    <p class="glinks"><a href="${gdir(s,p)}" target="_blank" rel="noopener">ここから歩くルート ↗</a></p>
-    <button class="go" data-jump="${p.id}">この${SHORT[p.t]}から探す →</button>
+    <div class="pk-top"><div class="pk-meta">${chip}<p class="d">${meta}</p></div>
+      ${ph?`<img class="pk-th" src="${ph[0]}" alt="${esc(name)}の写真" loading="lazy" onerror="this.remove()">`:""}</div>
+    <p>${esc(desc)}</p>
+    <p class="glinks">${links}</p>${extra}
     ${ph?`<p class="cr">写真：<a href="${ph[4]}" target="_blank" rel="noopener">${esc(ph[1])}</a> / ${ph[3]?`<a href="${ph[3]}" target="_blank" rel="noopener">${esc(ph[2])}</a>`:esc(ph[2])}（Wikimedia Commons）</p>`:""}
   </div>`;
+}
+const route=(s,p)=>`<a href="${gdir(s,p)}" target="_blank" rel="noopener">ここから歩くルート ↗</a>`;
+function peekHTML(s,p){
+  return compact({ph:P[p.n],name:p.n,
+    chip:K[p.n]?`<p class="oshi"><i>推し</i>${esc(K[p.n])}</p>`:"",
+    meta:`📍 ${p.a}・${esc(p.p)}${p.y?` ／ ${p.y}年${p.t==="kissa"?"創業":"竣工"}`:""}${p.by?` ／ ${esc(p.by)}`:""}`,
+    desc:p.d,links:route(s,p),extra:`<button class="go" data-jump="${p.id}">この${SHORT[p.t]}から探す →</button>`});
+}
+function giftDetail(s,g){
+  return compact({ph:GP[g.n],name:g.n,
+    chip:`<p class="oshi"><i>名物</i>${esc(g.item)}</p>`,
+    meta:`📍 ${g.a}・${esc(g.p)} ／ ${g.y?`${g.y}年創業`:`${esc(g.ys)}創業`}`,
+    desc:g.d,links:`${g.u?`<a href="${g.u}" target="_blank" rel="noopener">公式サイト ↗</a>`:""}<a href="${gq(g)}" target="_blank" rel="noopener">Googleマップで開く ↗</a>${route(s,g)}`});
 }
 function giftHTML(s,gifts){
   // スマホでは見出しだけの一行にたたみ、押すと開く（パソコンは常に開いた状態）
@@ -636,9 +644,7 @@ function giftHTML(s,gifts){
     return `<details class="gift" data-fold="gift"${open}>${head}<p class="empty">${n&&n.m<=5000?`${fmtD(st.r)}以内にはありません。いちばん近いのは「${esc(n.n)}」（${fmtD(n.m)}・${walk(n.m)}）です。`:"近くにはまだ登録がありません。"}</p></details>`}
   return `<details class="gift" data-fold="gift"${open}>${head}<ul class="glist">${gifts.map((g,i)=>`<li><span class="gnum" aria-hidden="true">${GL(i)}</span><details>
       <summary><span class="gn">${esc(g.n)}</span><span class="gm">${esc(g.item)}</span><span class="d">${fmtD(g.m)} ・ ${walk(g.m)} ・ ${g.y?`${g.y}年創業`:`${esc(g.ys)}創業`}</span></summary>
-      <div class="gd${GP[g.n]?" has-ph":""}"><div class="gtx"><p>${esc(g.d)}</p><p class="d">📍 ${g.a}・${esc(g.p)}</p>
-        <p class="glinks">${g.u?`<a href="${g.u}" target="_blank" rel="noopener">公式サイト ↗</a>`:""}<a href="${gq(g)}" target="_blank" rel="noopener">Googleマップで開く ↗</a><a href="${gdir(s,g)}" target="_blank" rel="noopener">ここから歩くルート ↗</a></p></div>
-        ${GP[g.n]?gphoto(g):""}</div></details></li>`).join("")}</ul></details>`;
+      ${giftDetail(s,g)}</details></li>`).join("")}</ul></details>`;
 }
 function renderPanel(){
   const el=document.getElementById("panel");const s=S.find(x=>x.id===st.sel);
