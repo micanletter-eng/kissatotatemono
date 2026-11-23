@@ -134,7 +134,16 @@ svg.map{width:100%;max-width:300px;height:auto;display:block;background:var(--pa
 .glist .d{flex-basis:100%;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
 .gd{margin-top:6px;font-size:13px;line-height:1.7;color:var(--brown-2)}
 .gd p{margin:0 0 4px}
-.gd a{color:var(--brown);margin-right:14px;font-size:12px}
+.gd a{color:var(--brown);font-size:12px}
+.glinks{display:flex;flex-wrap:wrap;gap:2px 14px}
+/* 手みやげの写真：くわしくを開いたときだけ、文字の右に小さく */
+.gd.has-ph{display:grid;grid-template-columns:minmax(0,1fr) 128px;gap:12px;align-items:start}
+.gph{margin:0}
+.gph img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;border:2px solid var(--brown);border-radius:10px;box-shadow:3px 3px 0 var(--brown)}
+.gph figcaption{margin-top:5px;font-size:9.5px;line-height:1.4;color:var(--muted);overflow-wrap:anywhere}
+.gph figcaption a{font-size:inherit;color:inherit}
+.gph.none{display:none}
+@media (max-width:400px){.gd.has-ph{grid-template-columns:minmax(0,1fr) 96px}}
 .empty{color:var(--muted);font-size:14px}
 footer{margin-top:40px;font-size:12px;color:var(--muted);max-width:48em}
 @media (prefers-reduced-motion: reduce){.spot{transition:none}}
@@ -281,6 +290,12 @@ const S = [
  {t:"kissa",n:"但馬屋珈琲店 本店",a:"東京",p:"新宿",lat:35.6935,lng:139.6995,d:"思い出横丁の一角。ネルドリップと古伊万里のカップ。"},
  {t:"arch",n:"伊勢丹新宿店 本館",a:"東京",p:"新宿",y:1933,by:"清水組",lat:35.6916,lng:139.7047,d:"アール・デコの装飾が外壁と階段に残る。東京都選定歴史的建造物。"},
 
+ // ---- 東京：池袋・目白 ----
+ {t:"kissa",n:"タカセ 池袋本店 喫茶室",a:"東京",p:"池袋",y:1920,lat:35.7300,lng:139.7131,d:"大正創業の洋菓子店の2階。喫茶室で、クリームソーダやパフェなど昭和の喫茶メニューを。"},
+ {t:"kissa",n:"珈琲 皇琲亭",a:"東京",p:"池袋",y:1983,lat:35.7312,lng:139.7138,d:"東口すぐの路地にある、業務用珈琲の山下コーヒー直営の珈琲専門店。こだわりの一杯を落ち着いて。"},
+ {t:"arch",n:"自由学園明日館",a:"東京",p:"目白",y:1921,by:"F.L.ライト・遠藤新",lat:35.7264,lng:139.7074,d:"ライトが設計した女学校の旧校舎。低い屋根と幾何学模様の窓、芝生の中庭。喫茶付きの見学ができる。重要文化財。"},
+ {t:"arch",n:"雑司が谷旧宣教師館",a:"東京",p:"雑司が谷",y:1907,lat:35.7208,lng:139.7204,d:"アメリカ人宣教師マッケーレブの自宅。豊島区に残るいちばん古い近代木造洋風建築で、無料で見学できる。"},
+ {t:"arch",n:"立教大学 本館（モリス館）",a:"東京",p:"池袋",y:1919,by:"マーフィ・アンド・ダナ",lat:35.7300,lng:139.7044,d:"蔦に覆われた赤煉瓦の校舎と時計台。今も教室として使われている。東京都選定歴史的建造物。"},
  // ---- 東京：渋谷・原宿 ----
  {t:"kissa",n:"名曲喫茶ライオン",a:"東京",p:"道玄坂",y:1926,lat:35.6580,lng:139.6966,d:"百軒店の路地に建つ洋館風の名曲喫茶。巨大なスピーカーに向かって座席が並び、店内は私語・撮影禁止。"},
  {t:"kissa",n:"茶亭 羽當",a:"東京",p:"宮益坂下",y:1989,lat:35.6602,lng:139.7034,d:"駅前の喧騒を忘れる落ち着いた店。棚いっぱいのカップから一客を選んで出してくれる。"},
@@ -328,22 +343,24 @@ const S = [
 // 手みやげ：昭和以前（1989年より前）創業で今も営業している菓子店・パン屋。左の一覧には出さず、詳細欄の「手みやげに」にだけ出す
 // y=創業年（はっきりしない店は ys に文章で）、m=名物
 const G=[
- {n:"うさぎや",a:"東京",p:"上野広小路",y:1913,item:"🥞 どらやき",lat:35.7062,lng:139.7719,d:"どら焼きの名店。毎日夕方まで焼いていて、ふっくらした皮が評判。賞味期限は翌日まで。"},
- {n:"近江屋洋菓子店",a:"東京",p:"神田淡路町",y:1884,item:"🍓 苺サンドショート",lat:35.6964,lng:139.7680,d:"神田で明治から続く洋菓子店。苺がまるごと挟まったショートケーキやアップルパイが定番。"},
+ {n:"うさぎや",a:"東京",p:"上野広小路",y:1913,item:"🥞 どらやき",u:"http://www.ueno-usagiya.jp/",lat:35.7062,lng:139.7719,d:"どら焼きの名店。毎日夕方まで焼いていて、ふっくらした皮が評判。賞味期限は翌日まで。"},
+ {n:"近江屋洋菓子店",a:"東京",p:"神田淡路町",y:1884,item:"🍓 苺サンドショート",u:"https://www.ohmiyayougashiten.co.jp/",lat:35.6964,lng:139.7680,d:"神田で明治から続く洋菓子店。苺がまるごと挟まったショートケーキやアップルパイが定番。"},
  {n:"空也",a:"東京",p:"銀座",y:1884,item:"🫘 空也もなか",lat:35.6709,lng:139.7628,d:"ひょうたん形の小ぶりなもなか。予約でほぼ売り切れるので、前もって電話で取り置きを。"},
- {n:"銀座木村家",a:"東京",p:"銀座",y:1869,item:"🍞 酒種あんぱん",lat:35.6716,lng:139.7652,d:"あんぱん発祥の店。桜の塩漬けをのせた「桜」は明治天皇への献上品として知られる。"},
- {n:"榮太樓總本鋪 日本橋本店",a:"東京",p:"日本橋",y:1857,item:"🟫 名代 金鍔",lat:35.6836,lng:139.7736,d:"日本橋のたもとで幕末から。屋台で売った金鍔が始まりで、飴や甘名納糖も名物。"},
- {n:"舟和 本店",a:"東京",p:"浅草",y:1902,item:"🍠 芋ようかん",lat:35.7120,lng:139.7946,d:"芋ようかん発祥の店。色とりどりのあんこ玉も一緒に。"},
+ {n:"銀座木村家",a:"東京",p:"銀座",y:1869,item:"🍞 酒種あんぱん",u:"https://www.ginzakimuraya.jp/",lat:35.6716,lng:139.7652,d:"あんぱん発祥の店。桜の塩漬けをのせた「桜」は明治天皇への献上品として知られる。"},
+ {n:"榮太樓總本鋪 日本橋本店",a:"東京",p:"日本橋",y:1857,item:"🟫 名代 金鍔",u:"https://www.eitaro.com/",lat:35.6836,lng:139.7736,d:"日本橋のたもとで幕末から。屋台で売った金鍔が始まりで、飴や甘名納糖も名物。"},
+ {n:"舟和 本店",a:"東京",p:"浅草",y:1902,item:"🍠 芋ようかん",u:"https://www.funawa.jp/",lat:35.7120,lng:139.7946,d:"芋ようかん発祥の店。色とりどりのあんこ玉も一緒に。"},
  {n:"亀十",a:"東京",p:"浅草",ys:"大正末期",item:"🥞 どら焼き",lat:35.7107,lng:139.7967,d:"雷門前の和菓子店。手のひらほどの大きさで、ふわふわの皮のどら焼きに行列ができる。"},
- {n:"パンのペリカン",a:"東京",p:"田原町",y:1942,item:"🍞 食パンとロールパン",lat:35.7086,lng:139.7913,d:"品目を食パンとロールパンの2種類に絞った老舗のパン屋。予約しておくと確実。"},
- {n:"新宿中村屋 本店",a:"東京",p:"新宿",y:1901,item:"🥮 月餅・中華まん",lat:35.6919,lng:139.7023,d:"本郷のパン屋として始まり、明治の終わりに新宿へ。クリームパンを考案した店としても知られる。"},
- {n:"代官山小川軒",a:"東京",p:"代官山",y:1905,item:"🍪 レイズン・ウィッチ",lat:35.6514,lng:139.7040,d:"明治創業の西洋料理店。ラム酒漬けレーズンをクッキーで挟んだレイズン・ウィッチは手みやげの定番。"},
- {n:"村上開新堂",a:"京都",p:"寺町二条",y:1907,item:"🍪 ロシアケーキ",lat:35.0140,lng:135.7674,d:"京都でいちばん古い洋菓子店。洋館風の店構えも見どころ。好事福盧（こうずぶくろ）は冬だけの名物。"},
- {n:"進々堂 寺町店",a:"京都",p:"寺町三条",y:1913,item:"🥖 フランスパン",lat:35.0093,lng:135.7670,d:"パリで修業した創業者が始めた、京都のパン文化を支えてきた老舗。創業者は京大北門前の喫茶「進々堂」も開いた。"},
+ {n:"パンのペリカン",a:"東京",p:"田原町",y:1942,item:"🍞 食パンとロールパン",u:"https://bakerpelican.com/",lat:35.7086,lng:139.7913,d:"品目を食パンとロールパンの2種類に絞った老舗のパン屋。予約しておくと確実。"},
+ {n:"新宿中村屋 本店",a:"東京",p:"新宿",y:1901,item:"🥮 月餅・中華まん",u:"https://www.nakamuraya.co.jp/",lat:35.6919,lng:139.7023,d:"本郷のパン屋として始まり、明治の終わりに新宿へ。クリームパンを考案した店としても知られる。"},
+ {n:"代官山小川軒",a:"東京",p:"代官山",y:1905,item:"🍪 レイズン・ウィッチ",u:"https://daikanyama-ogawaken.squarespace.com/",lat:35.6514,lng:139.7040,d:"明治創業の西洋料理店。ラム酒漬けレーズンをクッキーで挟んだレイズン・ウィッチは手みやげの定番。"},
+ {n:"タカセ 池袋本店",a:"東京",p:"池袋",y:1920,item:"🍰 洋菓子・菓子パン",lat:35.7300,lng:139.7131,d:"あんぱんの店として始まった大正創業の洋菓子店。1階で洋菓子とパン、2階は喫茶室。"},
+ {n:"池袋三原堂",a:"東京",p:"池袋",y:1937,item:"🦉 池ぶくろう最中",lat:35.7315,lng:139.7095,d:"日本橋三原堂からののれん分け。江戸川乱歩も池袋名物と書いた和菓子店。ふくろう形の最中が看板。"},
+ {n:"村上開新堂",a:"京都",p:"寺町二条",y:1907,item:"🍪 ロシアケーキ",u:"https://www.murakami-kaishindo.jp/",lat:35.0140,lng:135.7674,d:"京都でいちばん古い洋菓子店。洋館風の店構えも見どころ。好事福盧（こうずぶくろ）は冬だけの名物。"},
+ {n:"進々堂 寺町店",a:"京都",p:"寺町三条",y:1913,item:"🥖 フランスパン",u:"https://www.shinshindo.jp/",lat:35.0093,lng:135.7670,d:"パリで修業した創業者が始めた、京都のパン文化を支えてきた老舗。創業者は京大北門前の喫茶「進々堂」も開いた。"},
  {n:"出町ふたば",a:"京都",p:"出町柳",y:1899,item:"🫘 名代 豆餅",lat:35.0319,lng:135.7695,d:"赤えんどう豆がごろごろ入った豆餅に、いつも行列。賞味期限は当日中。"},
- {n:"鍵善良房 四条本店",a:"京都",p:"祇園",ys:"江戸中期（享保年間）",item:"🍮 くずきり・菊寿糖",lat:35.0040,lng:135.7748,d:"祇園の老舗。店内では注文ごとに作るくずきり、持ち帰りには菊の形の干菓子「菊寿糖」を。"},
+ {n:"鍵善良房 四条本店",a:"京都",p:"祇園",ys:"江戸中期（享保年間）",item:"🍮 くずきり・菊寿糖",u:"https://www.kagizen.co.jp/",lat:35.0040,lng:135.7748,d:"祇園の老舗。店内では注文ごとに作るくずきり、持ち帰りには菊の形の干菓子「菊寿糖」を。"},
  {n:"粟餅所 澤屋",a:"京都",p:"北野",y:1682,item:"🍡 粟餅",lat:35.0276,lng:135.7352,d:"北野天満宮の門前。注文ごとに搗く粟餅を、こし餡ときな粉で。売り切れ次第閉店。"},
- {n:"鶴屋八幡 大阪本店",a:"大阪",p:"今橋",y:1863,item:"🟫 百楽・小倉羹",lat:34.6908,lng:135.4992,d:"幕末創業の上方の和菓子店。茶房も併設していて、季節の上生菓子も並ぶ。"},
+ {n:"鶴屋八幡 大阪本店",a:"大阪",p:"今橋",y:1863,item:"🟫 百楽・小倉羹",u:"https://www.tsuruyahachiman.co.jp/",lat:34.6908,lng:135.4992,d:"幕末創業の上方の和菓子店。茶房も併設していて、季節の上生菓子も並ぶ。"},
  {n:"出入橋きんつば屋",a:"大阪",p:"堂島",y:1930,item:"🟫 きんつば",lat:34.6957,lng:135.4905,d:"店先の鉄板で一つずつ焼く、薄皮のきんつばの専門店。"},
 ].map((g,i)=>({...g,id:i}));
 
@@ -354,6 +371,7 @@ const K={
  "銀座 トリコロール本店":"☕ ネルドリップ","喫茶 YOU":"🍳 オムライス","カフェ・ド・ランブル":"☕ ブラン・エ・ノワール","ローヤル珈琲店":"🥞 ホットケーキ",
  "名曲・珈琲 新宿 らんぶる":"🛋 地下の200席","但馬屋珈琲店 本店":"☕ ネルドリップ",
  "名曲喫茶ライオン":"🎼 巨大スピーカー","茶亭 羽當":"☕ 選べるカップ","青山壹番館 渋谷店":"🍞 サービスセット",
+ "タカセ 池袋本店 喫茶室":"🍨 クリームソーダ","珈琲 皇琲亭":"☕ 珈琲専門店の一杯","自由学園明日館":"🪟 幾何学模様の窓","雑司が谷旧宣教師館":"🏡 明治の木造洋館","立教大学 本館（モリス館）":"🧱 蔦の赤煉瓦と時計台",
  "旧朝倉家住宅":"🌿 大正の和風邸宅と庭","明治神宮 宝物殿":"🏯 校倉造のコンクリート","国立代々木競技場":"〰️ 吊り屋根の曲線","渋谷区立松濤美術館":"⛲ 噴水のある吹き抜け","旧前田家本邸 洋館":"🏰 チューダー様式",
  "フランソア喫茶室":"🚢 客船風の内装","喫茶ソワレ":"🍧 ゼリーポンチ","築地":"☕ ウインナーコーヒー","六曜社珈琲店":"🍩 ドーナツ","スマート珈琲店":"🥞 ホットケーキ",
  "イノダコーヒ 本店":"☕ アラビアの真珠","進々堂 京大北門前":"🪑 黒田辰秋の大テーブル","喫茶 静香":"🌿 緑の看板",
@@ -371,6 +389,9 @@ const K={
 };
 // 写真：Wikimedia Commons の自由に使える写真（[ファイル, 撮影者, ライセンス, ライセンスURL, 出典ページ]）
 const P={
+ "自由学園明日館":["photos/p42.jpg","Wiiii","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Jiyugakuen_Myonichikan.jpg"],
+ "雑司が谷旧宣教師館":["photos/p43.jpg","Vetalapancavimsatika","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Zoshigaya_Missionary_Museum.jpg"],
+ "立教大学 本館（モリス館）":["photos/p44.jpg","投稿者（出典ページ参照）","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Rikkyo_University_Ikebukuro_Campus_Main_Building.jpg"],
  "東京国立博物館 本館":["photos/p01.jpg","Wiiii","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Tokyo_National_Museum,_Honkan_2010.jpg"],
  "国立科学博物館 日本館":["photos/p02.jpg","663highland","CC BY 2.5","https://creativecommons.org/licenses/by/2.5","https://commons.wikimedia.org/wiki/File:NMNC01s3200.jpg"],
  "国際子ども図書館（旧帝国図書館）":["photos/p03.jpg","Kakidai","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:2019_International_Library_of_Children%27s_Literature.jpg"],
@@ -420,7 +441,7 @@ const AREAS=["すべて","東京","京都","大阪"];
 // 地区：エリアの中をさらに分ける。[地区名, その地区に入る地名(p)]。京都・大阪も件数が増えたらここに足す
 const DISTS={
   東京:[["上野・本郷",["上野","本郷","湯島"]],["神保町・神田",["神保町","神田須田町","駿河台"]],["銀座・丸の内",["銀座","築地","丸の内","日本橋"]],
-        ["浅草",["浅草"]],["新宿",["新宿"]],["渋谷・原宿",["道玄坂","宮益坂下","並木橋","代官山","原宿","松濤","駒場"]]],
+        ["浅草",["浅草"]],["新宿",["新宿"]],["池袋・目白",["池袋","目白","雑司が谷"]],["渋谷・原宿",["道玄坂","宮益坂下","並木橋","代官山","原宿","松濤","駒場"]]],
 };
 const distOf=s=>(DISTS[s.a]||[]).find(d=>d[1].includes(s.p))?.[0]||"";
 S.forEach(s=>s.w=distOf(s));
@@ -491,17 +512,36 @@ function mapSVG(s,near,gifts=[]){
     <text x="${C+R/2*0.71+4}" y="${C+R/2*0.71+12}" fill="var(--muted)">${fmtD(st.r/2)}</text>
     <text x="${C+R*0.71+4}" y="${C+R*0.71+12}" fill="var(--muted)">${fmtD(st.r)}</text>
     <text x="${C}" y="14" fill="var(--muted)" text-anchor="middle">N ↑</text>`;
+  // 手みやげの店は先に（下の層に）小さめに描く。喫茶・建物の印と重なるときは外側へずらし、細い線で本当の位置とつなぐ
+  const main=[[C,C],...near.map(xy)];
+  gifts.forEach((p,i)=>{let[x,y]=xy(p);const x0=x,y0=y,need=19;
+    for(let k=0;k<3;k++)for(const[mx,my]of main){const dx=x-mx,dy=y-my,d=Math.hypot(dx,dy);
+      if(d<need){const a=d>0.5?Math.atan2(dy,dx):-Math.PI/4;x=mx+Math.cos(a)*need;y=my+Math.sin(a)*need}}
+    if(Math.hypot(x-x0,y-y0)>1)g+=`<line x1="${x0}" y1="${y0}" x2="${x}" y2="${y}" stroke="var(--brown-2)" stroke-width="1"/><circle cx="${x0}" cy="${y0}" r="2" fill="var(--brown-2)"/>`;
+    g+=`<circle cx="${x}" cy="${y}" r="8" fill="var(--rose)" stroke="var(--brown)" stroke-width="1.5"/><text x="${x}" y="${y+3.5}" text-anchor="middle" fill="var(--brown)" font-size="10" font-weight="700">${GL(i)}</text>`});
   near.forEach((p,i)=>{const[x,y]=xy(p);
     g+=o==="kissa"?`<circle cx="${x}" cy="${y}" r="10" fill="var(--brown)"/>`:`<rect x="${x-10}" y="${y-10}" width="20" height="20" rx="4" fill="var(--mustard)" stroke="var(--brown)" stroke-width="2"/>`;
     g+=`<text x="${x}" y="${y+4}" text-anchor="middle" fill="${o==="kissa"?"var(--paper)":"var(--brown)"}" font-weight="700">${i+1}</text>`});
-  // 手みやげの店：ばら色の丸にアルファベット
-  gifts.forEach((p,i)=>{const[x,y]=xy(p);
-    g+=`<circle cx="${x}" cy="${y}" r="10" fill="var(--rose)" stroke="var(--brown)" stroke-width="2"/><text x="${x}" y="${y+4}" text-anchor="middle" fill="var(--brown)" font-weight="700">${GL(i)}</text>`});
   g+=s.t==="kissa"?`<circle cx="${C}" cy="${C}" r="12" fill="var(--mustard-soft)" stroke="var(--brown)" stroke-width="4"/><text x="${C}" y="${C+5}" text-anchor="middle" font-size="13">☕</text>`:`<rect x="${C-12}" y="${C-12}" width="24" height="24" rx="4" fill="var(--mustard-soft)" stroke="var(--brown)" stroke-width="4"/><text x="${C}" y="${C+5}" text-anchor="middle" font-size="13">🏛</text>`;
   return `<svg class="map" viewBox="0 0 ${W} ${W}" role="img" aria-label="${esc(s.n)}を中心とした${fmtD(st.r)}圏の位置関係"><rect width="${W}" height="${W}" fill="none"/>${g}</svg>`;
 }
 // 手みやげに：半径内の店。なければいちばん近い店を案内（5km以内のときだけ）
 const GL=i=>String.fromCharCode(65+i);
+// 手みやげの写真（Wikimedia Commons の自由に使える写真）。[ファイル, 撮影者, ライセンス, ライセンスURL, 出典ページ]
+const GP={
+ "銀座木村家":["photos/g02.jpg","Kici","Public domain","","https://commons.wikimedia.org/wiki/File:Ginza_kimuraya_Bread.jpg"],
+ "舟和 本店":["photos/g04.jpg","Kentin","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Funawa_head_store_asakusa_2014.jpg"],
+ "新宿中村屋 本店":["photos/g03.jpg","Kentin","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Shinjuku_nakamuraya_head_store_tokyo_2014.jpg"],
+ "進々堂 寺町店":["photos/g06.jpg","Kykk wiki","CC0","http://creativecommons.org/publicdomain/zero/1.0/deed.en","https://commons.wikimedia.org/wiki/File:Shinshindo.jpg"],
+ "鍵善良房 四条本店":["photos/g07.jpg","Kykk wiki","CC0","http://creativecommons.org/publicdomain/zero/1.0/deed.en","https://commons.wikimedia.org/wiki/File:Kagizen_kuzukiri.jpg"],
+ "空也":["photos/g01.jpg","毒島みるく","CC0","http://creativecommons.org/publicdomain/zero/1.0/deed.en","https://commons.wikimedia.org/wiki/File:Kuya_monaka_(3).jpg"],
+ "村上開新堂":["photos/g05.jpg","Kykk wiki","CC0","http://creativecommons.org/publicdomain/zero/1.0/deed.en","https://commons.wikimedia.org/wiki/File:RussiaCake_MurakamiKaishindo.jpg"],
+ "粟餅所 澤屋":["photos/g08.jpg","Kykk wiki","CC0","http://creativecommons.org/publicdomain/zero/1.0/deed.en","https://commons.wikimedia.org/wiki/File:Awamochi_Sawaya.jpg"],
+ "榮太樓總本鋪 日本橋本店":["photos/g09.jpg","毒島みるく","CC0","http://creativecommons.org/publicdomain/zero/1.0/deed.en","https://commons.wikimedia.org/wiki/File:Eitaro_Sohonpo_2026.jpg"],
+};
+const gphoto=g=>{const ph=GP[g.n];
+  return `<figure class="gph"><img src="${ph[0]}" alt="${esc(g.n)}の写真" loading="lazy" onerror="this.closest('.gd').classList.remove('has-ph');this.parentNode.remove()">
+    <figcaption>写真：<a href="${ph[4]}" target="_blank" rel="noopener">${esc(ph[1])}</a> / ${ph[3]?`<a href="${ph[3]}" target="_blank" rel="noopener">${esc(ph[2])}</a>`:esc(ph[2])}</figcaption></figure>`};
 const giftsNear=(s,r)=>G.map(g=>({...g,m:dist(s,g)})).sort((p,q)=>p.m-q.m).filter(g=>g.m<=r);
 function giftHTML(s,gifts){
   const head=`<h3>🎁 手みやげに <small>${fmtD(st.r)}以内の老舗の菓子店・パン屋（昭和以前の創業）</small></h3>`;
@@ -509,8 +549,9 @@ function giftHTML(s,gifts){
     return `<div class="gift">${head}<p class="empty">${n&&n.m<=5000?`${fmtD(st.r)}以内にはありません。いちばん近いのは「${esc(n.n)}」（${fmtD(n.m)}・${walk(n.m)}）です。`:"近くにはまだ登録がありません。"}</p></div>`}
   return `<div class="gift">${head}<ul class="glist">${gifts.map((g,i)=>`<li><span class="gnum" aria-hidden="true">${GL(i)}</span><details>
       <summary><span class="gn">${esc(g.n)}</span><span class="gm">${esc(g.item)}</span><span class="d">${fmtD(g.m)} ・ ${walk(g.m)} ・ ${g.y?`${g.y}年創業`:`${esc(g.ys)}創業`}</span></summary>
-      <div class="gd"><p>${esc(g.d)}</p><p class="d">📍 ${g.a}・${esc(g.p)}</p>
-        <a href="${gq(g)}" target="_blank" rel="noopener">Googleマップで開く ↗</a><a href="${gdir(s,g)}" target="_blank" rel="noopener">ここから歩くルート ↗</a></div></details></li>`).join("")}</ul></div>`;
+      <div class="gd${GP[g.n]?" has-ph":""}"><div class="gtx"><p>${esc(g.d)}</p><p class="d">📍 ${g.a}・${esc(g.p)}</p>
+        <p class="glinks">${g.u?`<a href="${g.u}" target="_blank" rel="noopener">公式サイト ↗</a>`:""}<a href="${gq(g)}" target="_blank" rel="noopener">Googleマップで開く ↗</a><a href="${gdir(s,g)}" target="_blank" rel="noopener">ここから歩くルート ↗</a></p></div>
+        ${GP[g.n]?gphoto(g):""}</div></details></li>`).join("")}</ul></div>`;
 }
 function renderPanel(){
   const el=document.getElementById("panel");const s=S.find(x=>x.id===st.sel);
