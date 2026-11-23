@@ -50,8 +50,6 @@ button:focus-visible{outline:3px solid var(--mustard);outline-offset:2px}
 .find input{flex:1 1 260px;min-width:0;font:inherit;font-size:15px;color:var(--brown);background:var(--paper);border:2px solid var(--brown);border-radius:999px;padding:6px 16px;box-sizing:border-box}
 .find input:focus-visible{outline:3px solid var(--mustard);outline-offset:1px}
 .find input::placeholder{color:var(--muted)}
-/* 地区の段は狭い画面では横スクロール */
-@media (max-width:560px){.row.sub .chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;max-width:100%}.row.sub .chip{flex:none}}
 
 .grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:28px;align-items:start;margin-top:30px}
 @media (max-width:820px){.grid{grid-template-columns:1fr}}
@@ -98,8 +96,15 @@ summary.fold::-webkit-details-marker{display:none}
 .peek summary:focus-visible{outline:3px solid var(--mustard);outline-offset:2px;border-radius:6px}
 .peek .nm::after{content:" ▾";font-family:var(--body);font-size:11px;color:var(--muted);text-decoration:none;display:inline-block}
 .peek[open] .nm::after{content:" ▴"}
-.gd.pk{margin-top:8px;padding:10px 12px;background:var(--paper);border:1.5px solid var(--line);border-radius:12px}
-.gd.pk .oshi{margin:0 0 6px}
+.pk{margin-top:8px;padding:10px 12px;background:var(--paper);border:1.5px solid var(--line);border-radius:12px;font-size:13px;line-height:1.7;color:var(--brown-2)}
+.pk p{margin:0 0 4px}
+.pk a{color:var(--brown);font-size:12px}
+.pk-top{display:flex;gap:10px;align-items:center;margin-bottom:6px}
+.pk-th{flex:none;width:60px;height:60px;object-fit:cover;border:2px solid var(--brown);border-radius:10px;box-shadow:2px 2px 0 var(--brown);background:var(--paper)}
+.pk-meta{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
+.pk-meta p{margin:0}
+.pk .cr{margin:8px 0 0;font-size:9.5px;line-height:1.4;color:var(--muted);overflow-wrap:anywhere}
+.pk .cr a{font-size:inherit;color:inherit}
 .go{all:unset;box-sizing:border-box;cursor:pointer;margin-top:6px;display:inline-block;padding:4px 14px;border:2px solid var(--brown);border-radius:999px;background:var(--mustard-soft);font-size:12.5px}
 .go:hover{background:var(--mustard)}
 .go:focus-visible{outline:3px solid var(--mustard);outline-offset:2px}
@@ -609,17 +614,19 @@ const GP={
 };
 const gphoto=g=>smallPhoto(GP[g.n],g.n);
 const giftsNear=(s,r)=>G.map(g=>({...g,m:dist(s,g)})).sort((p,q)=>p.m-q.m).filter(g=>g.m<=r);
-// 近くの喫茶・建物：その場で小さく開く（一覧は切り替えない）。切り替えたい人だけ「〜から探す」を押す
 const smallPhoto=(ph,n)=>`<figure class="gph"><img src="${ph[0]}" alt="${esc(n)}の写真" loading="lazy" onerror="this.closest('.gd').classList.remove('has-ph');this.parentNode.remove()">
     <figcaption>写真：<a href="${ph[4]}" target="_blank" rel="noopener">${esc(ph[1])}</a> / ${ph[3]?`<a href="${ph[3]}" target="_blank" rel="noopener">${esc(ph[2])}</a>`:esc(ph[2])}</figcaption></figure>`;
+// 近くの喫茶・建物の詳細：左上に小さな正方形の写真、その横に推しと場所。説明とリンクは下に全幅で
 function peekHTML(s,p){const ph=P[p.n];
-  return `<div class="gd pk${ph?" has-ph":""}"><div class="gtx">
-      ${K[p.n]?`<p class="oshi"><i>推し</i>${esc(K[p.n])}</p>`:""}
-      <p>${esc(p.d)}</p>
-      <p class="d">📍 ${p.a}・${esc(p.p)}${p.y?` ／ ${p.y}年${p.t==="kissa"?"創業":"竣工"}`:""}${p.by?` ／ ${esc(p.by)}`:""}</p>
-      <p class="glinks"><a href="${gdir(s,p)}" target="_blank" rel="noopener">ここから歩くルート ↗</a></p>
-      <button class="go" data-jump="${p.id}">この${SHORT[p.t]}から探す →</button></div>
-    ${ph?smallPhoto(ph,p.n):""}</div>`;
+  return `<div class="pk">
+    <div class="pk-top">${ph?`<img class="pk-th" src="${ph[0]}" alt="${esc(p.n)}の写真" loading="lazy" onerror="this.remove()">`:""}
+      <div class="pk-meta">${K[p.n]?`<p class="oshi"><i>推し</i>${esc(K[p.n])}</p>`:""}
+        <p class="d">📍 ${p.a}・${esc(p.p)}${p.y?` ／ ${p.y}年${p.t==="kissa"?"創業":"竣工"}`:""}${p.by?` ／ ${esc(p.by)}`:""}</p></div></div>
+    <p>${esc(p.d)}</p>
+    <p class="glinks"><a href="${gdir(s,p)}" target="_blank" rel="noopener">ここから歩くルート ↗</a></p>
+    <button class="go" data-jump="${p.id}">この${SHORT[p.t]}から探す →</button>
+    ${ph?`<p class="cr">写真：<a href="${ph[4]}" target="_blank" rel="noopener">${esc(ph[1])}</a> / ${ph[3]?`<a href="${ph[3]}" target="_blank" rel="noopener">${esc(ph[2])}</a>`:esc(ph[2])}（Wikimedia Commons）</p>`:""}
+  </div>`;
 }
 function giftHTML(s,gifts){
   // スマホでは見出しだけの一行にたたみ、押すと開く（パソコンは常に開いた状態）
