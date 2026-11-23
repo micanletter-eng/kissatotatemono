@@ -237,6 +237,15 @@ const S = [
  {t:"kissa",n:"但馬屋珈琲店 本店",a:"東京",p:"新宿",lat:35.6935,lng:139.6995,d:"思い出横丁の一角。ネルドリップと古伊万里のカップ。"},
  {t:"arch",n:"伊勢丹新宿店 本館",a:"東京",p:"新宿",y:1933,by:"清水組",lat:35.6916,lng:139.7047,d:"アール・デコの装飾が外壁と階段に残る。東京都選定歴史的建造物。"},
 
+ // ---- 渋谷 ----
+ {t:"kissa",n:"名曲喫茶ライオン",a:"渋谷",p:"道玄坂",y:1926,lat:35.6580,lng:139.6966,d:"百軒店の路地に建つ洋館風の名曲喫茶。巨大なスピーカーに向かって座席が並び、店内は私語・撮影禁止。"},
+ {t:"kissa",n:"茶亭 羽當",a:"渋谷",p:"宮益坂下",y:1989,lat:35.6602,lng:139.7034,d:"駅前の喧騒を忘れる落ち着いた店。棚いっぱいのカップから一客を選んで出してくれる。"},
+ {t:"kissa",n:"青山壹番館 渋谷店",a:"渋谷",p:"並木橋",y:1973,lat:35.6545,lng:139.7055,d:"並木橋の交差点近く。昭和の内装が残り、ドラマのロケにも使われる。トースト付きのサービスセットが定番。"},
+ {t:"arch",n:"旧朝倉家住宅",a:"渋谷",p:"代官山",y:1919,lat:35.6503,lng:139.7006,d:"東京府議会議長・朝倉虎治郎の邸宅。震災も戦災もくぐり抜けた大正の木造和風住宅と回遊式の庭。重要文化財。"},
+ {t:"arch",n:"明治神宮 宝物殿",a:"渋谷",p:"原宿",y:1921,by:"大江新太郎",lat:35.6793,lng:139.6977,d:"校倉造をコンクリートで表した、和風意匠の鉄筋コンクリート建築の最初期の例。重要文化財。"},
+ {t:"arch",n:"国立代々木競技場",a:"渋谷",p:"原宿",y:1964,by:"丹下健三",lat:35.6676,lng:139.7003,d:"東京オリンピックのために建てられた、吊り屋根の曲線が美しい体育館。重要文化財。"},
+ {t:"arch",n:"渋谷区立松濤美術館",a:"渋谷",p:"松濤",y:1980,by:"白井晟一",lat:35.6609,lng:139.6918,d:"赤みを帯びた石張りの外壁と、中央の噴水がある吹き抜け。邸宅街に佇む昭和の名建築。"},
+ {t:"arch",n:"旧前田家本邸 洋館",a:"渋谷",p:"駒場",y:1929,by:"塚本靖・高橋貞太郎",lat:35.6611,lng:139.6807,d:"加賀藩主の家系・前田侯爵の邸宅。チューダー様式の洋館を無料で見学できる（目黒区）。重要文化財。"},
  // ---- 京都 ----
  {t:"kissa",n:"フランソア喫茶室",a:"京都",p:"四条木屋町",y:1934,lat:35.0043,lng:135.7702,d:"豪華客船を模した内装。喫茶店として初めて国の登録有形文化財に。"},
  {t:"kissa",n:"喫茶ソワレ",a:"京都",p:"四条木屋町",y:1948,lat:35.0039,lng:135.7707,d:"青い照明に浮かぶ東郷青児の絵。宝石のようなゼリーポンチ。"},
@@ -278,6 +287,8 @@ const K={
  "さぼうる":"🍝 ナポリタン","ミロンガ・ヌオーバ":"🎻 タンゴ","ラドリオ":"☕ ウインナーコーヒー","珈琲 ショパン":"🍞 小倉トースト",
  "銀座 トリコロール本店":"☕ ネルドリップ","喫茶 YOU":"🍳 オムライス","カフェ・ド・ランブル":"☕ ブラン・エ・ノワール","ローヤル珈琲店":"🥞 ホットケーキ",
  "名曲・珈琲 新宿 らんぶる":"🛋 地下の200席","但馬屋珈琲店 本店":"☕ ネルドリップ",
+ "名曲喫茶ライオン":"🎼 巨大スピーカー","茶亭 羽當":"☕ 選べるカップ","青山壹番館 渋谷店":"🍞 サービスセット",
+ "旧朝倉家住宅":"🌿 大正の和風邸宅と庭","明治神宮 宝物殿":"🏯 校倉造のコンクリート","国立代々木競技場":"〰️ 吊り屋根の曲線","渋谷区立松濤美術館":"⛲ 噴水のある吹き抜け","旧前田家本邸 洋館":"🏰 チューダー様式",
  "フランソア喫茶室":"🚢 客船風の内装","喫茶ソワレ":"🍧 ゼリーポンチ","築地":"☕ ウインナーコーヒー","六曜社珈琲店":"🍩 ドーナツ","スマート珈琲店":"🥞 ホットケーキ",
  "イノダコーヒ 本店":"☕ アラビアの真珠","進々堂 京大北門前":"🪑 黒田辰秋の大テーブル","喫茶 静香":"🌿 緑の看板",
  "純喫茶アメリカン":"🥞 ホットケーキ","丸福珈琲店 千日前本店":"☕ 深煎り珈琲","アラビヤコーヒー":"🥪 ホットサンド","マヅラ":"🚀 宇宙船のような内装",
@@ -324,6 +335,11 @@ const P={
  "北浜レトロビル":["photos/p28.jpg","Bittercup","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Kitahama-Retro.jpg"],
  "綿業会館":["photos/p29.jpg","Mc681","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Mengyo_kaikan_in_201408.JPG"],
  "生駒ビルヂング":["photos/p30.jpg","Bittercup","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Ikoma-bld.jpg"],
+ "旧朝倉家住宅":["photos/p37.jpg","江戸村のとくぞう","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:Asakura-ke2a.jpg"],
+ "国立代々木競技場":["photos/p38.jpg","Rs1421","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Yoyogi-National-First-Gymnasium-01.jpg"],
+ "渋谷区立松濤美術館":["photos/p39.jpg","Adece033090","CC BY 4.0","https://creativecommons.org/licenses/by/4.0","https://commons.wikimedia.org/wiki/File:%E6%B8%8B%E8%B0%B7%E5%8C%BA%E7%AB%8B%E6%9D%BE%E6%BF%A4%E7%BE%8E%E8%A1%93%E9%A4%A8.jpg"],
+ "旧前田家本邸 洋館":["photos/p40.jpg","Wiiii","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Former_Maeda_Estate_2009.jpg"],
+ "名曲喫茶ライオン":["photos/p41.jpg","Eugene Ormandy","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:%E5%90%8D%E6%9B%B2%E5%96%AB%E8%8C%B6%E3%83%A9%E3%82%A4%E3%82%AA%E3%83%B3%E3%81%AE%E7%9C%8B%E6%9D%BF_-_B4nc1-3io4h.jpg"],
  "大丸心斎橋店 本館":["photos/p31.jpg","Tokumeigakarinoaoshima","CC BY-SA 4.0","https://creativecommons.org/licenses/by-sa/4.0","https://commons.wikimedia.org/wiki/File:DAIMARU_Shinsaibashi_Store_Main_Building.jpg"],
  "高島屋大阪店（南海ビル）":["photos/p32.jpg","Own work","CC BY-SA 3.0","https://creativecommons.org/licenses/by-sa/3.0","https://commons.wikimedia.org/wiki/File:Namba_Station.JPG"],
  "ラドリオ":["photos/p33.jpg","Araisyohei","CC BY 4.0","https://creativecommons.org/licenses/by/4.0","https://commons.wikimedia.org/wiki/File:Jinbocho_ladrio_2023-10-20(2)_as.jpg"],
@@ -333,8 +349,8 @@ const P={
 };
 
 // 西暦→和暦（年の途中の改元は、その年の大半の元号で表す）
-const era=y=>!y?["昭和の","老舗"]:y<=1912?["明治",`${y-1867}年`]:y<=1926?["大正",`${y-1911}年`]:["昭和",`${y-1925}年`];
-const AREAS=["すべて","東京","京都","大阪"];
+const era=y=>!y?["昭和の","老舗"]:y<=1912?["明治",`${y-1867}年`]:y<=1926?["大正",`${y-1911}年`]:y>=1989?["平成",`${y-1988}年`]:["昭和",`${y-1925}年`];
+const AREAS=["すべて","東京","渋谷","京都","大阪"];
 const LABEL={kissa:"純喫茶",arch:"レトロ建築"};
 const SHORT={kissa:"純喫茶",arch:"建物"};
 const TAG={kissa:`<span class="tag kissa">☕ 純喫茶</span>`,arch:`<span class="tag arch">🏛 建物</span>`};
