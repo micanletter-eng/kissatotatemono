@@ -38,6 +38,19 @@ h1{font-family:var(--display);font-weight:400;font-size:clamp(1.6rem,4.5vw,2.4re
 .chip[aria-pressed="true"]{background:var(--brown);color:var(--paper)}
 .chip:hover{background:var(--mustard-soft)} .chip[aria-pressed="true"]:hover{background:var(--brown-2)}
 button:focus-visible{outline:3px solid var(--mustard);outline-offset:2px}
+[hidden]{display:none!important}
+/* 地区：エリアの下にもう一段。少し小さめのチップ */
+.row.sub{margin-top:-4px}
+.row.sub .lb{font-size:13px;color:var(--brown-2)}
+.row.sub .chip{padding:4px 14px;font-size:13px}
+.find{display:flex;flex-wrap:wrap;gap:8px;flex:1;min-width:0}
+.find input{flex:1 1 260px;min-width:0;font:inherit;font-size:15px;color:var(--brown);background:var(--paper);border:2px solid var(--brown);border-radius:999px;padding:6px 16px;box-sizing:border-box}
+.find input:focus-visible{outline:3px solid var(--mustard);outline-offset:1px}
+.find input::placeholder{color:var(--muted)}
+.geo{margin:0;font-size:13px;color:var(--brown-2)}
+.geo.err{color:#a3392b}
+/* 地区の段は狭い画面では横スクロール */
+@media (max-width:560px){.row.sub .chips{flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;max-width:100%}.row.sub .chip{flex:none}}
 
 .grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:28px;align-items:start;margin-top:30px}
 @media (max-width:820px){.grid{grid-template-columns:1fr}}
@@ -153,6 +166,18 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);max-width:48em}
       <span class="lb">📍 エリア</span>
       <div class="chips" id="areas" role="group" aria-label="エリア"></div>
     </div>
+    <div class="row sub" id="row-dist" hidden>
+      <span class="lb">└ 地区</span>
+      <div class="chips" id="dists" role="group" aria-label="地区"></div>
+    </div>
+    <div class="row">
+      <span class="lb">🔎 さがす</span>
+      <div class="find">
+        <input id="q" type="search" autocomplete="off" placeholder="地名・駅名・店名（例：渋谷、神保町、ナポリタン）" aria-label="地名・駅名・店名でさがす">
+        <button class="chip" id="here" aria-pressed="false">📍 現在地から近い順</button>
+      </div>
+    </div>
+    <p class="geo" id="geo" aria-live="polite" hidden></p>
   </div>
 
   <div class="grid">
@@ -237,15 +262,15 @@ const S = [
  {t:"kissa",n:"但馬屋珈琲店 本店",a:"東京",p:"新宿",lat:35.6935,lng:139.6995,d:"思い出横丁の一角。ネルドリップと古伊万里のカップ。"},
  {t:"arch",n:"伊勢丹新宿店 本館",a:"東京",p:"新宿",y:1933,by:"清水組",lat:35.6916,lng:139.7047,d:"アール・デコの装飾が外壁と階段に残る。東京都選定歴史的建造物。"},
 
- // ---- 渋谷 ----
- {t:"kissa",n:"名曲喫茶ライオン",a:"渋谷",p:"道玄坂",y:1926,lat:35.6580,lng:139.6966,d:"百軒店の路地に建つ洋館風の名曲喫茶。巨大なスピーカーに向かって座席が並び、店内は私語・撮影禁止。"},
- {t:"kissa",n:"茶亭 羽當",a:"渋谷",p:"宮益坂下",y:1989,lat:35.6602,lng:139.7034,d:"駅前の喧騒を忘れる落ち着いた店。棚いっぱいのカップから一客を選んで出してくれる。"},
- {t:"kissa",n:"青山壹番館 渋谷店",a:"渋谷",p:"並木橋",y:1973,lat:35.6545,lng:139.7055,d:"並木橋の交差点近く。昭和の内装が残り、ドラマのロケにも使われる。トースト付きのサービスセットが定番。"},
- {t:"arch",n:"旧朝倉家住宅",a:"渋谷",p:"代官山",y:1919,lat:35.6503,lng:139.7006,d:"東京府議会議長・朝倉虎治郎の邸宅。震災も戦災もくぐり抜けた大正の木造和風住宅と回遊式の庭。重要文化財。"},
- {t:"arch",n:"明治神宮 宝物殿",a:"渋谷",p:"原宿",y:1921,by:"大江新太郎",lat:35.6793,lng:139.6977,d:"校倉造をコンクリートで表した、和風意匠の鉄筋コンクリート建築の最初期の例。重要文化財。"},
- {t:"arch",n:"国立代々木競技場",a:"渋谷",p:"原宿",y:1964,by:"丹下健三",lat:35.6676,lng:139.7003,d:"東京オリンピックのために建てられた、吊り屋根の曲線が美しい体育館。重要文化財。"},
- {t:"arch",n:"渋谷区立松濤美術館",a:"渋谷",p:"松濤",y:1980,by:"白井晟一",lat:35.6609,lng:139.6918,d:"赤みを帯びた石張りの外壁と、中央の噴水がある吹き抜け。邸宅街に佇む昭和の名建築。"},
- {t:"arch",n:"旧前田家本邸 洋館",a:"渋谷",p:"駒場",y:1929,by:"塚本靖・高橋貞太郎",lat:35.6611,lng:139.6807,d:"加賀藩主の家系・前田侯爵の邸宅。チューダー様式の洋館を無料で見学できる（目黒区）。重要文化財。"},
+ // ---- 東京：渋谷・原宿 ----
+ {t:"kissa",n:"名曲喫茶ライオン",a:"東京",p:"道玄坂",y:1926,lat:35.6580,lng:139.6966,d:"百軒店の路地に建つ洋館風の名曲喫茶。巨大なスピーカーに向かって座席が並び、店内は私語・撮影禁止。"},
+ {t:"kissa",n:"茶亭 羽當",a:"東京",p:"宮益坂下",y:1989,lat:35.6602,lng:139.7034,d:"駅前の喧騒を忘れる落ち着いた店。棚いっぱいのカップから一客を選んで出してくれる。"},
+ {t:"kissa",n:"青山壹番館 渋谷店",a:"東京",p:"並木橋",y:1973,lat:35.6545,lng:139.7055,d:"並木橋の交差点近く。昭和の内装が残り、ドラマのロケにも使われる。トースト付きのサービスセットが定番。"},
+ {t:"arch",n:"旧朝倉家住宅",a:"東京",p:"代官山",y:1919,lat:35.6503,lng:139.7006,d:"東京府議会議長・朝倉虎治郎の邸宅。震災も戦災もくぐり抜けた大正の木造和風住宅と回遊式の庭。重要文化財。"},
+ {t:"arch",n:"明治神宮 宝物殿",a:"東京",p:"原宿",y:1921,by:"大江新太郎",lat:35.6793,lng:139.6977,d:"校倉造をコンクリートで表した、和風意匠の鉄筋コンクリート建築の最初期の例。重要文化財。"},
+ {t:"arch",n:"国立代々木競技場",a:"東京",p:"原宿",y:1964,by:"丹下健三",lat:35.6676,lng:139.7003,d:"東京オリンピックのために建てられた、吊り屋根の曲線が美しい体育館。重要文化財。"},
+ {t:"arch",n:"渋谷区立松濤美術館",a:"東京",p:"松濤",y:1980,by:"白井晟一",lat:35.6609,lng:139.6918,d:"赤みを帯びた石張りの外壁と、中央の噴水がある吹き抜け。邸宅街に佇む昭和の名建築。"},
+ {t:"arch",n:"旧前田家本邸 洋館",a:"東京",p:"駒場",y:1929,by:"塚本靖・高橋貞太郎",lat:35.6611,lng:139.6807,d:"加賀藩主の家系・前田侯爵の邸宅。チューダー様式の洋館を無料で見学できる（目黒区）。重要文化財。"},
  // ---- 京都 ----
  {t:"kissa",n:"フランソア喫茶室",a:"京都",p:"四条木屋町",y:1934,lat:35.0043,lng:135.7702,d:"豪華客船を模した内装。喫茶店として初めて国の登録有形文化財に。"},
  {t:"kissa",n:"喫茶ソワレ",a:"京都",p:"四条木屋町",y:1948,lat:35.0039,lng:135.7707,d:"青い照明に浮かぶ東郷青児の絵。宝石のようなゼリーポンチ。"},
@@ -350,14 +375,22 @@ const P={
 
 // 西暦→和暦（年の途中の改元は、その年の大半の元号で表す）
 const era=y=>!y?["昭和の","老舗"]:y<=1912?["明治",`${y-1867}年`]:y<=1926?["大正",`${y-1911}年`]:y>=1989?["平成",`${y-1988}年`]:["昭和",`${y-1925}年`];
-const AREAS=["すべて","東京","渋谷","京都","大阪"];
+const AREAS=["すべて","東京","京都","大阪"];
+// 地区：エリアの中をさらに分ける。[地区名, その地区に入る地名(p)]。京都・大阪も件数が増えたらここに足す
+const DISTS={
+  東京:[["上野・本郷",["上野","本郷","湯島"]],["神保町・神田",["神保町","神田須田町","駿河台"]],["銀座・丸の内",["銀座","築地","丸の内","日本橋"]],
+        ["浅草",["浅草"]],["新宿",["新宿"]],["渋谷・原宿",["道玄坂","宮益坂下","並木橋","代官山","原宿","松濤","駒場"]]],
+};
+const distOf=s=>(DISTS[s.a]||[]).find(d=>d[1].includes(s.p))?.[0]||"";
+S.forEach(s=>s.w=distOf(s));
 const LABEL={kissa:"純喫茶",arch:"レトロ建築"};
 const SHORT={kissa:"純喫茶",arch:"建物"};
 const TAG={kissa:`<span class="tag kissa">☕ 純喫茶</span>`,arch:`<span class="tag arch">🏛 建物</span>`};
 const other=t=>t==="kissa"?"arch":"kissa";
-const st={mode:"kissa",area:"すべて",sel:null,r:1000};
-try{const v=JSON.parse(localStorage.getItem("kr-state")||"{}");if(v.r)st.r=v.r;if(AREAS.includes(v.area))st.area=v.area;}catch(e){}
-const save=()=>{try{localStorage.setItem("kr-state",JSON.stringify({r:st.r,area:st.area}))}catch(e){}};
+const st={mode:"kissa",area:"すべて",dist:"すべて",q:"",here:null,sel:null,r:1000};
+try{const v=JSON.parse(localStorage.getItem("kr-state")||"{}");if(v.r)st.r=v.r;if(AREAS.includes(v.area))st.area=v.area;
+  if((DISTS[st.area]||[]).some(d=>d[0]===v.dist))st.dist=v.dist;}catch(e){}
+const save=()=>{try{localStorage.setItem("kr-state",JSON.stringify({r:st.r,area:st.area,dist:st.dist}))}catch(e){}};
 
 function dist(a,b){const R=6371000,toR=Math.PI/180;
   const dLat=(b.lat-a.lat)*toR,dLng=(b.lng-a.lng)*toR;
@@ -368,17 +401,34 @@ const walk=m=>`徒歩約${Math.max(1,Math.round(m*1.25/80))}分`; // 直線距�
 const gq=s=>`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(s.n+" "+s.p)}`;
 const gdir=(a,b)=>`https://www.google.com/maps/dir/?api=1&origin=${a.lat},${a.lng}&destination=${encodeURIComponent(b.n+" "+b.p)}&travelmode=walking`;
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const nearOf=(s,r)=>S.filter(x=>x.t===other(s.t)&&x.a===s.a).map(x=>({...x,m:dist(s,x)})).sort((p,q)=>p.m-q.m).filter(x=>x.m<=r);
+// 近くの検索はエリアや地区をまたいで、距離だけで探す
+const nearOf=(s,r)=>S.filter(x=>x.t===other(s.t)).map(x=>({...x,m:dist(s,x)})).sort((p,q)=>p.m-q.m).filter(x=>x.m<=r);
+// 検索用：全角半角・大文字小文字・カタカナひらがなの違いを無視する
+const fold=s=>String(s).normalize("NFKC").toLowerCase().replace(/[ァ-ヶ]/g,c=>String.fromCharCode(c.charCodeAt(0)-0x60)).replace(/\s+/g,"");
+S.forEach(s=>s.hay=fold([s.n,s.a,s.p,s.w,s.by||"",s.d,K[s.n]||""].join(" ")));
+// 検索語があるときはエリア・地区を問わず全体から探す
+const matches=s=>{const q=st.q?fold(st.q):"";
+  return q?s.hay.includes(q):(st.area==="すべて"||s.a===st.area)&&(st.dist==="すべて"||s.w===st.dist)};
+const visible=()=>{const v=S.filter(s=>s.t===st.mode&&matches(s));
+  if(st.here){v.forEach(s=>s.h=dist(st.here,s));v.sort((p,q)=>p.h-q.h)}return v};
 
 function renderControls(){
   document.getElementById("m-kissa").setAttribute("aria-pressed",st.mode==="kissa");
   document.getElementById("m-arch").setAttribute("aria-pressed",st.mode==="arch");
   document.getElementById("areas").innerHTML=AREAS.map(a=>`<button class="chip" data-a="${a}" aria-pressed="${a===st.area}">${a}</button>`).join("");
+  const ds=DISTS[st.area];
+  document.getElementById("row-dist").hidden=!ds;
+  document.getElementById("dists").innerHTML=ds?["すべて",...ds.map(d=>d[0])].map(d=>`<button class="chip" data-dist="${d}" aria-pressed="${d===st.dist}">${d}</button>`).join(""):"";
+  const h=document.getElementById("here");
+  h.setAttribute("aria-pressed",!!st.here);h.textContent=st.here?"📍 現在地から近い順（解除）":"📍 現在地から近い順";
 }
 function renderList(){
-  const items=S.filter(s=>s.t===st.mode&&(st.area==="すべて"||s.a===st.area));
+  const items=visible();
   if(!items.some(s=>s.id===st.sel))st.sel=items[0]?.id??null;
-  document.getElementById("listhead").textContent=`${LABEL[st.mode]} ${items.length}件 ・ 右の数字は${fmtD(st.r)}以内の${LABEL[other(st.mode)]}`;
+  const head=st.q?`「${st.q}」で見つかった${LABEL[st.mode]} ${items.length}件（全エリアから）`
+    :`${LABEL[st.mode]} ${items.length}件`;
+  document.getElementById("listhead").textContent=`${head}${st.here?" ・ 現在地から近い順":""} ・ 右の数字は${fmtD(st.r)}以内の${LABEL[other(st.mode)]}`;
+  if(!items.length){document.getElementById("list").innerHTML=`<p class="empty">${st.q?"見つかりませんでした。別のことばで試してみてください。":"この地区には登録がありません。"}</p>`;return}
   document.getElementById("list").innerHTML=items.map(s=>{
     const c=nearOf(s,st.r).length;
     const e=era(s.y);
@@ -389,7 +439,7 @@ function renderList(){
         <span class="nm">${esc(s.n)}</span>
         ${K[s.n]?`<span class="oshi"><i>推し</i>${esc(K[s.n])}</span>`:""}
         <span class="ds">${esc(s.d)}</span>
-        <span class="pl">📍 ${s.a}・${esc(s.p)}${s.y?` ／ ${s.y}年${s.t==="kissa"?"創業":"竣工"}`:""}${s.by?` ／ ${esc(s.by)}`:""}</span>
+        <span class="pl">📍 ${s.a}・${esc(s.p)}${st.here?` ／ <b>現在地から${fmtD(s.h)}</b>`:""}${s.y?` ／ ${s.y}年${s.t==="kissa"?"創業":"竣工"}`:""}${s.by?` ／ ${esc(s.by)}`:""}</span>
       </span></button>`}).join("");
 }
 function mapSVG(s,near){
@@ -411,7 +461,7 @@ function renderPanel(){
   const el=document.getElementById("panel");const s=S.find(x=>x.id===st.sel);
   if(!s){el.innerHTML=`<p class="empty">このエリアには登録がありません。</p>`;return}
   const o=other(s.t),near=nearOf(s,st.r);
-  const all=S.filter(x=>x.t===o&&x.a===s.a).map(x=>({...x,m:dist(s,x)})).sort((p,q)=>p.m-q.m);
+  const all=S.filter(x=>x.t===o).map(x=>({...x,m:dist(s,x)})).sort((p,q)=>p.m-q.m);
   const ph=P[s.n];
   const photo=ph?`<figure class="photo">
         <img src="${ph[0]}" alt="${esc(s.n)}の写真" loading="lazy" onerror="this.parentNode.classList.add('none')">
@@ -446,13 +496,37 @@ function render(){renderControls();renderList();renderPanel()}
 document.addEventListener("click",e=>{
   const b=e.target.closest("button");if(!b)return;
   if(b.id==="m-kissa"||b.id==="m-arch"){st.mode=b.id.slice(2);st.sel=null;render();return}
-  if(b.dataset.a){st.area=b.dataset.a;st.sel=null;save();render();return}
+  if(b.dataset.a){st.area=b.dataset.a;st.dist="すべて";clearQ();st.sel=null;save();render();return}
+  if(b.dataset.dist){st.dist=b.dataset.dist;clearQ();st.sel=null;save();render();return}
+  if(b.id==="here"){toggleHere();return}
   if(b.dataset.r){st.r=+b.dataset.r;save();renderList();renderPanel();return}
   if(b.dataset.id){st.sel=+b.dataset.id;renderList();renderPanel();
     if(matchMedia("(max-width:820px)").matches)document.getElementById("panel").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});return}
-  if(b.dataset.jump){const t=S[+b.dataset.jump];st.mode=t.t;st.area=st.area==="すべて"?"すべて":t.a;st.sel=t.id;render();
+  if(b.dataset.jump){const t=S[+b.dataset.jump];st.mode=t.t;
+    // 飛び先が今の絞り込みで見えないときは、絞り込みをゆるめる
+    if(!matches(t)){clearQ();if(st.area!=="すべて"&&st.area!==t.a){st.area=t.a}st.dist=(st.dist==="すべて"||t.w===st.dist)?st.dist:"すべて";save()}
+    st.sel=t.id;render();
     document.querySelector(`.spot[data-id="${t.id}"]`)?.scrollIntoView({block:"nearest"});}
 });
+// 検索欄：打つたびに絞り込む（エリア・地区のボタンを押すと検索語は消える）
+const qEl=document.getElementById("q");
+function clearQ(){st.q="";qEl.value=""}
+qEl.addEventListener("input",()=>{st.q=qEl.value.trim();st.sel=null;renderList();renderPanel()});
+// 現在地：許可されたら近い順に並べる。位置はこの画面の中だけで使い、保存も送信もしない
+const geo=document.getElementById("geo");
+const geoSay=(t,err)=>{geo.hidden=!t;geo.textContent=t||"";geo.classList.toggle("err",!!err)};
+function toggleHere(){
+  if(st.here){st.here=null;geoSay("");render();return}
+  if(!navigator.geolocation){geoSay("このブラウザでは現在地を使えません。",true);return}
+  geoSay("現在地を確認しています…");
+  navigator.geolocation.getCurrentPosition(p=>{
+    st.here={lat:p.coords.latitude,lng:p.coords.longitude};st.sel=null;
+    const n=S.filter(s=>s.t===st.mode).map(s=>dist(st.here,s)).sort((a,b)=>a-b)[0];
+    geoSay(n>20000?`現在地から近い順に並べました（いちばん近い${LABEL[st.mode]}まで${fmtD(n)}）。エリアを「すべて」にすると全体から並びます。`:"現在地から近い順に並べました。");
+    render();
+  },e=>{geoSay(e.code===1?"位置情報の利用が許可されていません。ブラウザの設定で許可すると使えます。":"現在地を取得できませんでした。少し待ってもう一度お試しください。",true)},
+  {enableHighAccuracy:false,timeout:10000,maximumAge:60000});
+}
 render();
 
 // ---- ご意見ボックス：Supabase（kaden-test）の feedback テーブルに保存 ----
